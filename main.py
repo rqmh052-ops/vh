@@ -11,7 +11,7 @@ CORS(app)
 # الرمز السري الافتراضي للوحة الآدمن
 ADMIN_SECRET = "admin500"
 
-# تحميل الصورة مسبقاً لتوفير الوقت وزيادة كفاءة المعالجة وسرعتها
+# تحميل الصورة مسبقا لتوفير الوقت وزيادة كفاءة المعالجة وسرعتها
 IMAGE_URL = "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj2T0W-oALk1u5PRF9YvBClDd7ycxpWc54AeAFlzzGStIvOhSBSouwRa5csreSZeAiDSPlBEmMALyxVYO-aPTReJ3CQeFS3Q2cBDN0mliP15RV9xD8ID2YIuyD7i9rcbVCcb0r1AOn-RCk9/s829/%25D8%25B5%25D9%2588%25D8%25B1-%25D8%25B9%25D9%258ا%25D9%2584-%25D8%25AE%25D9%2584%25D9%2581%25D9%258A%25D8%25A7%25D8%25AA-%25D8%25B1%25D9%2585%25D8%25B2%25D9%258A%25D8%25A7%25D8%25AA-%25D8%25B9%25D9%258A%25D8%25A7%25D9%2584+%25282%2529.jpg"
 cached_image_base64 = None
 
